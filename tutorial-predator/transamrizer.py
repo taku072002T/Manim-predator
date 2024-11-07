@@ -159,7 +159,7 @@ class AnimatedSin(Scene):
         self.play(FadeOut(VGroup(vertical_line,point_at_pi_half,value_label,point_at_pi,ver0tohalf,verhalftopi)))
         self.wait(1.0)
         
-        # 一巡後
+        # 2巡後
         t = ValueTracker(0)
         initial_point = [new_axes.coords_to_point(t.get_value(),func(t.get_value()))]
         dot = Dot(point=initial_point)
@@ -215,6 +215,44 @@ class AnimatedSin(Scene):
         
         self.wait(5.0)
         self.play(FadeOut(VGroup(vertical_line,vertical_line2,point_at_pi_1third,point_at_pi_2third,point_at_pi,ver0to1third,ver1to2third,ver2thirdtopi)))
+        self.wait(1.0)
+        
+        #3巡後
+                # 36巡後
+        t = ValueTracker(0)
+        initial_point = [new_axes.coords_to_point(t.get_value(),func(t.get_value()))]
+        dot = Dot(point=initial_point)
+        dot.add_updater(lambda x: x.move_to(new_axes.c2p(t.get_value(), func(t.get_value()))))
+        #　最初からVGroupしとけばよかった...
+        vertical_lines_4 = VGroup(*[
+            always_redraw(lambda i=i: Line(
+                start=new_axes.c2p(np.pi*i/4, 0),
+                end=new_axes.c2p(np.pi*i/4, func(np.pi*i/4)),
+                color=RED
+            )) for i in range(1, 5)
+        ])
+        
+        points_4 = VGroup(*[
+            Dot(new_axes.c2p(np.pi*i/4, func(np.pi*i/4)), color=RED)
+            for i in range(1, 5)
+        ])
+
+        self.play(Create(dot))
+        self.play(t.animate.set_value(np.pi))
+        self.play(Create(vertical_lines_4), Create(points_4))
+        self.play(FadeOut(dot))
+
+        horizontal_lines_4= VGroup(*[
+            always_redraw(lambda i=i: Line(
+                start=new_axes.c2p(np.pi*(i-1)/4, func(np.pi*i/4)),
+                end=new_axes.c2p(np.pi*i/4, func(np.pi*i/4)),
+                color=RED
+            )) for i in range(1, 5)
+        ])
+        
+        self.play(Create(horizontal_lines_4))
+        self.wait(5.0)
+        self.play(FadeOut(VGroup(vertical_lines_4, points_4, horizontal_lines_4)))
         self.wait(1.0)
 
         # 36巡後
